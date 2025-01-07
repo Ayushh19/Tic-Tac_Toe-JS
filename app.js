@@ -1,14 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let boxes = document.querySelectorAll(".box");
-  let rs = document.querySelector("#rs");
-  let newGameBtn = document.querySelector("#new-btn")
-  let msgContainer = document.querySelector(".mss-container")
-  let msg = document.querySelector("#msg")
-
-
+  const boxes = document.querySelectorAll(".box");
+  const rs = document.querySelector("#rs");
+  const newGameBtn = document.querySelector("#new-btn");
+  const msgContainer = document.querySelector(".mss-container");
+  const msg = document.querySelector("#msg");
 
   let turnO = true;
 
+  // Win patterns for Tic Tac Toe
   const winpattern = [
     [0, 1, 2],
     [0, 3, 6],
@@ -20,66 +19,72 @@ document.addEventListener("DOMContentLoaded", () => {
     [6, 7, 8],
   ];
 
+  // Function to reset the game
   const resetGame = () => {
     turnO = true;
-    enable();
-    msgContainer.classList.add("hide");
+    enable(); // Re-enable all boxes
+    msgContainer.classList.add("hide"); // Hide the message container
+  };
 
-  }
+  // Function to enable all boxes
+  const enable = () => {
+    boxes.forEach((box) => {
+      box.disabled = false;
+      box.innerText = "";
+    });
+  };
 
+  // Function to disable all boxes
+  const disable = () => {
+    boxes.forEach((box) => {
+      box.disabled = true;
+    });
+  };
+
+  // Function to show the winner
+  const showWinner = (winner) => {
+    msg.innerText = `Congratulations! Winner is ${winner}`;
+    msgContainer.classList.remove("hide");
+    disable(); // Disable all boxes after a win
+  };
+
+  // Function to check the winner
+  const checkWinner = () => {
+    for (let pattern of winpattern) {
+      const pos1Val = boxes[pattern[0]].innerText;
+      const pos2Val = boxes[pattern[1]].innerText;
+      const pos3Val = boxes[pattern[2]].innerText;
+
+      // Check if all positions in the pattern are filled and equal
+      if (pos1Val !== "" && pos1Val === pos2Val && pos2Val === pos3Val) {
+        showWinner(pos1Val);
+        return;
+      }
+    }
+
+    // Check for a draw
+    if ([...boxes].every((box) => box.innerText !== "")) {
+      msg.innerText = "It's a Draw!";
+      msgContainer.classList.remove("hide");
+    }
+  };
+
+  // Add click event listeners to each box
   boxes.forEach((box) => {
     box.addEventListener("click", () => {
-      if (turnO){
+      if (turnO) {
         box.innerText = "O";
         turnO = false;
-      }else{
-        box.innerText =("X");
+      } else {
+        box.innerText = "X";
         turnO = true;
       }
-      box.disabled = true;
-      checkWinner();  
+      box.disabled = true; // Disable the clicked box
+      checkWinner(); // Check if there's a winner
     });
-
-    enable = () =>{
-      for(let box of boxes) {
-        box.disabled=false;
-        box.innerText="";
-      }
-    }
-
-    const disable = () =>{
-      for(let box of boxes) {
-        box.disabled=true;
-      }
-    }
-
-    
-
-    const showWinner = (winner) => {
-      msg.innerText = `Congratulations ! Winner is ${winner}`;
-      msgContainer.classList.remove("hide");
-      disable();
-
-    }
-
-    const checkWinner= () => {
-      for(let pattern of winpattern){
-        let pos1Val = boxes[pattern[0]].innerText;
-        let pos2Val = boxes[pattern[1]].innerText;
-        let pos3Val = boxes[pattern[2]].innerText;
- 
-        if(pos1Val != "" && pos2Val != "" && pos3Val != ""){
-          if (pos1Val === pos2Val && pos2Val === pos3Val){
-            showWinner(pos1Val); 
-          }
-        }
-      }
-    }
   });
-  
-newGameBtn.addEventListener("click",resetGame)
-rs.addEventListener("click",resetGame)
+
+  // Add event listeners for reset and new game buttons
+  newGameBtn.addEventListener("click", resetGame);
+  rs.addEventListener("click", resetGame);
 });
-
-
-
